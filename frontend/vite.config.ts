@@ -1,15 +1,8 @@
-
 import type { Plugin } from "vite";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
-/**
- * Injects the canvas postMessage bridge into every dev + production index.html so the
- * parent app can install the vh-fix script cross-origin (see frontend IframeNavigation).
- * Without this, `vite build` drops the hand-written inline script from source index.html
- * in some pipelines — the transform runs for all HTML outputs.
- */
 function uxpilotCanvasVhBridge(): Plugin {
   return {
     name: "uxpilot-canvas-vh-bridge",
@@ -37,9 +30,8 @@ function uxpilotCanvasVhBridge(): Plugin {
   };
 }
 
-// https://vitejs.dev/config/
-export default defineConfig(() => ({
-  base: process.env.VITE_BASE || "/",
+export default defineConfig({
+  base: "/",   // ✅ FIXED (important for Render)
   plugins: [react(), uxpilotCanvasVhBridge()],
   resolve: {
     alias: {
@@ -47,6 +39,13 @@ export default defineConfig(() => ({
     },
   },
   server: {
-   allowedHosts: ['uxpilot.net','host.uxpilot.net','dev.host.uxpilot.net', 'uxpilot.ai', 'localhost', '127.0.0.1'],
+    allowedHosts: [
+      "uxpilot.net",
+      "host.uxpilot.net",
+      "dev.host.uxpilot.net",
+      "uxpilot.ai",
+      "localhost",
+      "127.0.0.1",
+    ],
   },
-}));
+});
